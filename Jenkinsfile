@@ -7,17 +7,17 @@ pipeline {
         DOCKER_CREDENTIALS_ID = "newone" // Jenkins credentials ID
         CONTAINER_NAME = "mycontainer11"
         CONTAINER_NAME1 = "mycontainer12"
-
     }
     stages {
         stage('Clone Repository') {
             steps {
-                git url:'https://github.com/Santhosh2010-ramesh/jenkins-ssh-docker.git',branch:'main'
+                git 'https://github.com/Santhosh2010-ramesh/jenkins-ssh-docker.git'
             }
         }
         stage('Docker Login') {
             steps {
                 script {
+                    // Authenticate with Docker Hub using the Jenkins credentials ID
                     docker.withRegistry('https://index.docker.io/v1/', DOCKER_CREDENTIALS_ID) {
                         echo "Logged into Docker Hub"
                     }
@@ -27,7 +27,10 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
+                    // Use docker.withRegistry to make sure the login credentials are used during the build
+                    docker.withRegistry('https://index.docker.io/v1/', DOCKER_CREDENTIALS_ID) {
+                        sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
+                    }
                 }
             }
         }
@@ -48,6 +51,7 @@ pipeline {
         stage('Push to Docker Hub') {
             steps {
                 script {
+                    // Authenticate and push the image to Docker Hub
                     docker.withRegistry('https://index.docker.io/v1/', DOCKER_CREDENTIALS_ID) {
                         sh "docker tag ${DOCKER_IMAGE}:${DOCKER_TAG} ${DOCKER_REPO}:${DOCKER_TAG}"
                         sh "docker push ${DOCKER_REPO}:${DOCKER_TAG}"
