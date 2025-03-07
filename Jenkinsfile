@@ -15,7 +15,7 @@ pipeline{
     environment {
         DOCKER_IMAGE = "my-jenkins-app"
         DOCKER_TAG = "latest"
-        DOCKER_REPO = "karthik449/my-jenkins-app"
+        DOCKER_REPO = "santhosh2010/my-jenkins-app"
         DOCKER_CREDENTIALS_ID = "docker4" // Jenkins credentials ID
         CONTAINER_NAME = "mycontainer1"
         CONTAINER_NAME1 = "mycontainer2"
@@ -25,7 +25,7 @@ pipeline{
 
         stage('Clone Repository') {
             steps {
-                git branch: 'main', url: 'https://github.com/karthikeya964/docker-jenkins-app.git'
+                git branch: 'main', url: 'https://github.com/Santhosh2010-ramesh/jenkins-ssh-docker.git'
             }
         }
 
