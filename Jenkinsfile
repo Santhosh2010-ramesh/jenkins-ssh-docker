@@ -18,7 +18,7 @@ pipeline{
     steps {
         script {
             echo "Logging into Docker Hub..."
-            withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+            withCredentials([usernamePassword(credentialsId: 'docker-hub-credentialss', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
                 sh '''
                 echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
                 docker build -t ${DOCKER_IMAGE} .
@@ -42,7 +42,7 @@ pipeline{
             steps {
                 script {
                     echo "Logging into Docker Hub..."
-                    docker.withRegistry('https://index.docker.io/v1/', 'docker-hub-credentials') {
+                    docker.withRegistry('https://index.docker.io/v1/', 'docker-hub-credentialss') {
                         echo "Pushing Docker image..."
                         sh "docker push ${DOCKER_IMAGE}"
                         echo "Docker image pushed successfully."
@@ -54,7 +54,7 @@ pipeline{
         stage('Deploy to server') {
             steps {
                 script {
-withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+withCredentials([usernamePassword(credentialsId: 'docker-hub-credentialss', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
 sh '''
 echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
 docker pull prabsin/my-jenkins-app:latest
