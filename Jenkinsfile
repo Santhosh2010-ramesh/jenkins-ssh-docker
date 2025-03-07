@@ -4,6 +4,9 @@ pipeline {
         DOCKER_IMAGE = "my-jenkins-app"
         DOCKER_TAG = "latest"
         DOCKER_REPO = "santhosh2010/my-jenkins-app"
+        DOCKER_CREDENTIALS_ID = "new_cred";
+        CONTAINER_NAME = &quot;local-container&quot;
+        CONTAINER_NAME1 = &quot;server-container&quot;
     }
     stages {
         stage('Clone Repository') {
