@@ -57,7 +57,7 @@ pipeline{
 withCredentials([usernamePassword(credentialsId: 'docker-hub-credentialss', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
 sh '''
 echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-docker pull prabsin/my-jenkins-app:latest
+docker pull santhosh2010/my-jenkins-app:latest
 '''
 
 
