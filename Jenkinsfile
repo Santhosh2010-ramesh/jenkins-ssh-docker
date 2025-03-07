@@ -8,7 +8,7 @@ pipeline {
     stages {
         stage('Clone Repository') {
             steps {
-                git 'https://github.com/your-username/docker-jenkins-app.git'
+                git url:'https://github.com/Santhosh2010-ramesh/jenkins-ssh-docker.git',branch:'main'
             }
         }
         stage('Build Docker Image') {
