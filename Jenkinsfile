@@ -4,55 +4,31 @@ pipeline {
         DOCKER_IMAGE = "my-jenkins-app"
         DOCKER_TAG = "latest"
         DOCKER_REPO = "santhosh2010/my-jenkins-app"
-        DOCKER_CREDENTIALS_ID = "newone" // Jenkins credentials ID
-        CONTAINER_NAME = "mycontainer11"
-        CONTAINER_NAME1 = "mycontainer12"
     }
     stages {
         stage('Clone Repository') {
             steps {
-                git 'https://github.com/Santhosh2010-ramesh/jenkins-ssh-docker.git',branch:'main'
-            }
-        }
-        stage('Docker Login') {
-            steps {
-                script {
-                    // Authenticate with Docker Hub using the Jenkins credentials ID
-                    docker.withRegistry('https://index.docker.io/v1/', DOCKER_CREDENTIALS_ID) {
-                        echo "Logged into Docker Hub"
-                    }
-                }
+                git 'https://github.com/your-username/docker-jenkins-app.git'
             }
         }
         stage('Build Docker Image') {
             steps {
                 script {
-                    // Use docker.withRegistry to make sure the login credentials are used during the build
-                    docker.withRegistry('https://index.docker.io/v1/', DOCKER_CREDENTIALS_ID) {
-                        sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
-                    }
+                    sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
                 }
             }
         }
         stage('Run Container Locally') {
             steps {
                 script {
-                    sh """
-                        # Stop and remove existing container if running
-                        docker ps -a -q --filter name=${CONTAINER_NAME} | xargs -r docker stop || true
-                        docker ps -a -q --filter name=${CONTAINER_NAME} | xargs -r docker rm || true
-
-                        # Run new container
-                        docker run -d -p 8095:80 --name ${CONTAINER_NAME} ${DOCKER_IMAGE}:${DOCKER_TAG}
-                    """
+                    sh "docker run -d -p 8080:80 --name my-container ${DOCKER_IMAGE}:${DOCKER_TAG}"
                 }
             }
         }
         stage('Push to Docker Hub') {
             steps {
                 script {
-                    // Authenticate and push the image to Docker Hub
-                    docker.withRegistry('https://index.docker.io/v1/', DOCKER_CREDENTIALS_ID) {
+                    docker.withRegistry('https://index.docker.io/v1/', 'docker-hub-credentials') {
                         sh "docker tag ${DOCKER_IMAGE}:${DOCKER_TAG} ${DOCKER_REPO}:${DOCKER_TAG}"
                         sh "docker push ${DOCKER_REPO}:${DOCKER_TAG}"
                     }
@@ -62,13 +38,7 @@ pipeline {
         stage('Deploy to Server') {
             steps {
                 script {
-                    sh """
-                        sshpass -p "root" ssh -o StrictHostKeyChecking=no master@192.168.203.128 '
-                        docker pull ${DOCKER_REPO}:${DOCKER_TAG} &&
-                        docker ps -a -q --filter name=${CONTAINER_NAME1} | xargs -r docker stop || true &&
-                        docker ps -a -q --filter name=${CONTAINER_NAME1} | xargs -r docker rm || true &&
-                        docker run -d -p 80:80 --name ${CONTAINER_NAME1} ${DOCKER_REPO}:${DOCKER_TAG}'
-                    """
+                    sh "ssh user@remote-server 'docker pull ${DOCKER_REPO}:${DOCKER_TAG} && docker run -d -p 80:80 ${DOCKER_REPO}:${DOCKER_TAG}'"
                 }
             }
         }
